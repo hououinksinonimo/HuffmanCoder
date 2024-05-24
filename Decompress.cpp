@@ -86,10 +86,8 @@ void decompress_data_from_file(Tree_element* const root, const std::string &file
             length_of_last_byte--;
         } while ( !current->data_exist );
 
-        if ( current->data_exist ) {
-            writing.write( (char* )&( current->data ), 1);
-            current = root;
-        }
+        writing.write( (char* )&( current->data ), 1);
+        current = root;
     }
     
     reading.close();
