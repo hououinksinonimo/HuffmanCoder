@@ -101,16 +101,13 @@ void create_elementary_codes(std::vector<uint64_t> &B, std::vector<uint8_t> &shi
     }
 }
 
-void write_elementary_codes_into_file(const std::vector<uint64_t> &B, const std::vector<uint8_t> &shift, const uint8_t &length_of_last_byte, uint8_t &last_byte)
+void write_elementary_codes_into_file(const std::vector<uint64_t> &B, const std::vector<uint8_t> &shift, const uint8_t &length_of_last_byte, const uint8_t &last_byte)
 {
     std::ofstream out("data_for_decompress.bin", std::ios_base::binary);
 
     out.write((char* )&length_of_last_byte, 1);
-
-    if ( length_of_last_byte ) {
-        last_byte = last_byte << (8 - length_of_last_byte);
-        out.write((char* )&last_byte, 1);
-    }
+    
+    out.write((char* )&last_byte, 1);
 
     out.write((char* )&( B[0] ), 2048);
 
@@ -132,24 +129,27 @@ void compress_file(const std::vector<uint64_t> &B, const std::vector<uint8_t> &s
 
     while ( file.read((char* )(&c), 1) ) {
         uint64_t elementary_code = B[c];
-        uint8_t s = shift[c] - 1;
-        uint64_t mask = 1ULL << s;
+        uint8_t s = shift[c];
+        uint64_t mask = ( 1ULL << s ) - 1;
 
-        while ( mask ) {
-            while ( ( length < 8 ) && mask ) {
-                byte = ( byte << 1 ) | ( ( elementary_code & mask ) >> s ); 
-                length++; 
-                mask >>= 1;
-                s--;
+        while ( s ) {
+            uint8_t need_bit_length = 8 - length;
+
+            if ( need_bit_length > s ) {
+                byte |= elementary_code << ( need_bit_length - s );
+                length += s;
+                s = 0;
             }
-
-            if (length == 8) {
+            else {
+                s -= need_bit_length;
+                byte |= elementary_code >> s;
+                mask >>= need_bit_length;
+                elementary_code &= mask;
                 out.write((char* )&byte, 1);
-                byte = 0; 
+                byte = 0;
                 length = 0;
             }
         }
-
     }
 
     out.close();

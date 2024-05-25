@@ -1,2 +1,2 @@
-g++ c.o d.o main.o bt.o -O3 -o HuffmanCoder
+g++ c.o d.o main.o bt.o -Ofast -o HuffmanCoder
 pause

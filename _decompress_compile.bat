@@ -1,2 +1,2 @@
-g++ -c Decompress.cpp -O3 -o d.o
+g++ -c Decompress.cpp -Ofast -o d.o
 pause

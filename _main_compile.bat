@@ -1,2 +1,2 @@
-g++ -c main.cpp -O3 -o main.o
+g++ -c main.cpp -Ofast -o main.o
 pause

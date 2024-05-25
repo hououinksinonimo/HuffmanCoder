@@ -1,2 +1,2 @@
-g++ -c Compress.cpp -O3 -o c.o
+g++ -c Compress.cpp -Ofast -o c.o
 pause

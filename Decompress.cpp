@@ -5,9 +5,8 @@ void read_data_for_decompress(std::vector<uint64_t> &B, std::vector<uint8_t> &sh
     std::ifstream file("data_for_decompress.bin", std::ios_base::binary);
 
     file.read((char* )&length_of_last_byte, 1);
-
-    if ( length_of_last_byte )
-        file.read((char* )&last_byte, 1);
+    
+    file.read((char* )&last_byte, 1);
 
     file.read((char* )&( B[0] ), 2048);
 

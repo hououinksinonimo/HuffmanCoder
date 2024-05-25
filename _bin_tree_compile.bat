@@ -1,2 +1,2 @@
-g++ -c Binary_Tree.cpp -O3 -o bt.o
+g++ -c Binary_Tree.cpp -Ofast -o bt.o
 pause

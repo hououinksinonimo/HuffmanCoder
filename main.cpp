@@ -41,7 +41,6 @@ void decompress(const std::string &filename)
 
 int main(int argc, char* argv[])
 {
-
     if ( ( argc < 3 ) && ( ( *(argv[1]) != 'c' ) && ( *(argv[1]) != 'd' ) ) ) {
         std::cout << "Неверно переданные параметры.\n";
         exit(1);
