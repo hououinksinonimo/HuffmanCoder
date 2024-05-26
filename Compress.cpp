@@ -89,15 +89,19 @@ void create_elementary_codes(std::vector<uint64_t> &B, std::vector<uint8_t> &shi
 
         size++;
     }
+    
+    if ( size == 1 ) 
+        shift[ alphabet[0].letter_vector[0] ]++;
+    else {
+        size_t pos0 = size - 2, pos1 = pos0 + 1;
 
-    size_t pos0 = size - 2, pos1 = pos0 + 1;
+        for ( uint8_t a : alphabet[pos0].letter_vector )
+            shift[a]++;
 
-    for ( uint8_t a : alphabet[pos0].letter_vector )
-        shift[a]++;
-
-    for ( uint8_t a : alphabet[pos1].letter_vector ) {
-        B[a] = ( 1ULL << shift[a] ) | B[a];
-        shift[a]++;
+        for ( uint8_t a : alphabet[pos1].letter_vector ) {
+            B[a] = ( 1ULL << shift[a] ) | B[a];
+            shift[a]++;
+        }
     }
 }
 
