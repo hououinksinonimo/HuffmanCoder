@@ -13,28 +13,10 @@ void compress(const std::string &filename)
 
 void decompress(const std::string &filename)
 {
-    std::vector<uint64_t> B(256);
-    std::vector<uint8_t> shift(256);
     uint8_t length_of_last_byte, last_byte;
-
-    read_data_for_decompress(B, shift, length_of_last_byte, last_byte);
-
-    std::vector<uint8_t> alphabet;
-    for (size_t i = 0; i < 256; i++)
-        if ( shift[i] )
-            alphabet.push_back(i);
-
     Binary_tree bin_tree;
-    create_binary_tree_of_elementary_codes(alphabet, B, shift, bin_tree);
 
-    size_t size = alphabet.size(), count = 0;
-    for (size_t i = 0; i < size; i++)
-        count += (size_t)( get_letter_by_way(B[ alphabet[i] ], shift[ alphabet[i] ], bin_tree.root) == alphabet[i] );
-
-    if ( count != size ) {
-        std::cout << "Ошибка в создании двоичного дерева.\n";
-        exit(2);
-    }
+    create_binary_tree_of_elementary_codes(length_of_last_byte, last_byte, bin_tree);
 
     decompress_data_from_file(bin_tree.root, filename, length_of_last_byte, last_byte);
 }

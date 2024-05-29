@@ -3,7 +3,6 @@
 void count_frequency(const std::string &filename, std::vector<uint64_t> &letter_count)
 {
     std::ifstream file(filename, std::ios_base::binary);
-
     uint8_t c;
 
     while ( file.read((char* )&c, 1) )
@@ -26,7 +25,6 @@ void create_alphabet(std::vector<data_about_letter_vector> &alphabet, const std:
         if ( letter_count[i] ) {
             alphabet[size].letter_vector.push_back(i);
             alphabet[size].count = letter_count[i];
-
             size++;
         }
     
@@ -36,6 +34,7 @@ void create_alphabet(std::vector<data_about_letter_vector> &alphabet, const std:
 void count_frequency_and_create_alphabet(const std::string &filename, std::vector<data_about_letter_vector> &alphabet)
 {
     std::vector<uint64_t> letter_count(256);
+
     count_frequency(filename, letter_count);
 
     create_alphabet(alphabet, letter_count);
@@ -49,6 +48,7 @@ bool compare(const data_about_letter_vector &left, const data_about_letter_vecto
 void create_elementary_codes(std::vector<uint64_t> &B, std::vector<uint8_t> &shift, const std::string &filename)
 {   
     std::vector<data_about_letter_vector> alphabet(256);
+    
     count_frequency_and_create_alphabet(filename, alphabet);
 
     size_t size = alphabet.size();
@@ -124,12 +124,9 @@ void compress_file(const std::vector<uint64_t> &B, const std::vector<uint8_t> &s
 {
     std::cout << "Начало сжатия\n";
 
-    uint8_t byte = 0, length = 0;
-
+    uint8_t byte = 0, length = 0, c;
     std::ofstream out("compressed_data.bin", std::ios_base::binary);
     std::ifstream file(filename, std::ios_base::binary);
-
-    uint8_t c;
 
     while ( file.read((char* )(&c), 1) ) {
         uint64_t elementary_code = B[c];
@@ -157,6 +154,7 @@ void compress_file(const std::vector<uint64_t> &B, const std::vector<uint8_t> &s
     }
 
     out.close();
+    
     file.close();
 
     write_elementary_codes_into_file(B, shift, length, byte);

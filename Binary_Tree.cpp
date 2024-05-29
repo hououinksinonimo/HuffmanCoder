@@ -3,8 +3,8 @@
 Tree_element::Tree_element() 
 {
     data_exist = false;
-    left = nullptr;
-    right = nullptr;
+    left = NULL;
+    right = NULL;
 }
 
 Binary_tree::Binary_tree()
@@ -14,7 +14,7 @@ Binary_tree::Binary_tree()
 
 void Binary_tree::delete_tree(Tree_element* current)
 {
-    if ( current != nullptr ) {
+    if ( current ) {
         delete_tree(current->left);
         delete_tree(current->right);
         delete current;
@@ -34,20 +34,14 @@ void Binary_tree::insert(const uint8_t &letter, const uint64_t &way, const uint8
 
     while ( mask ){
         if ( way & mask ) {
-            if ( current->right != nullptr )
-                current = current->right;
-            else {
+            if ( !current->right )
                 current->right = new Tree_element();
-                current = current->right;
-            }
+            current = current->right;
         }
         else {
-            if ( current->left != nullptr )
-                current = current->left;
-            else {
+            if ( !current->left )
                 current->left = new Tree_element();
-                current = current->left;
-            }
+            current = current->left;
         }
 
         mask >>= 1;

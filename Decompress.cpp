@@ -15,14 +15,6 @@ void read_data_for_decompress(std::vector<uint64_t> &B, std::vector<uint8_t> &sh
     file.close();
 }
 
-void create_binary_tree_of_elementary_codes(const std::vector<uint8_t> &alphabet, const std::vector<uint64_t> &B, const std::vector<uint8_t> &shift, Binary_tree &tree)
-{
-    size_t size = alphabet.size();
-
-    for (size_t i = 0; i < size; i++)
-        tree.insert(alphabet[i], B[ alphabet[i] ], shift[ alphabet[i] ]);
-}
-
 uint8_t get_letter_by_way(const uint64_t &way, const uint8_t &way_length, Tree_element* const root)
 {
     Tree_element* current = root;
@@ -41,15 +33,40 @@ uint8_t get_letter_by_way(const uint64_t &way, const uint8_t &way_length, Tree_e
     return ( current->data );
 }
 
+void create_binary_tree_of_elementary_codes(uint8_t &length_of_last_byte, uint8_t &last_byte, Binary_tree &tree)
+{
+    std::vector<uint64_t> B(256);
+    std::vector<uint8_t> shift(256);
+
+    read_data_for_decompress(B, shift, length_of_last_byte, last_byte);
+
+    std::vector<uint8_t> alphabet;
+    for (size_t i = 0; i < 256; i++)
+        if ( shift[i] )
+            alphabet.push_back(i);
+
+    size_t size = alphabet.size(), count = 0;
+
+    for (size_t i = 0; i < size; i++)
+        tree.insert(alphabet[i], B[ alphabet[i] ], shift[ alphabet[i] ]);
+    
+    for (size_t i = 0; i < size; i++)
+        count += (size_t)( get_letter_by_way(B[ alphabet[i] ], shift[ alphabet[i] ], tree.root) == alphabet[i] );
+
+    if ( count != size ) {
+        std::cout << "Ошибка в создании двоичного дерева поиска.\n";
+        exit(2);
+    }
+}
+
+
 void decompress_data_from_file(Tree_element* const root, const std::string &filename, uint8_t &length_of_last_byte, const uint8_t &last_byte)
 {
     std::cout << "Начало разжатия\n";
 
     std::ifstream reading("compressed_data.bin", std::ios_base::binary);
-
     std::ofstream writing(filename, std::ios_base::binary);
     Tree_element* current = root;
-
     uint8_t byte = 0;
 
     while ( reading.read((char* )&byte, 1) ) {
@@ -90,5 +107,6 @@ void decompress_data_from_file(Tree_element* const root, const std::string &file
     }
     
     reading.close();
+    
     writing.close();
 }
