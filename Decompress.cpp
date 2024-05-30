@@ -40,12 +40,15 @@ void create_binary_tree_of_elementary_codes(uint8_t &length_of_last_byte, uint8_
 
     read_data_for_decompress(B, shift, length_of_last_byte, last_byte);
 
-    std::vector<uint8_t> alphabet;
+    std::vector<uint8_t> alphabet(256);
+
+    size_t size = 0;
+    
     for (size_t i = 0; i < 256; i++)
         if ( shift[i] )
-            alphabet.push_back(i);
+            alphabet[size++] = i;
 
-    size_t size = alphabet.size(), count = 0;
+    size_t count = 0;
 
     for (size_t i = 0; i < size; i++)
         tree.insert(alphabet[i], B[ alphabet[i] ], shift[ alphabet[i] ]);
