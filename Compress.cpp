@@ -1,3 +1,4 @@
+
 #include "Compress.h"
 
 void count_frequency(const std::string &filename, std::vector<uint64_t> &letter_count)
@@ -55,6 +56,8 @@ void create_elementary_codes(std::vector<uint64_t> &B, std::vector<uint8_t> &shi
     
     std::sort(alphabet.begin(), alphabet.end(), compare);
 
+    std::vector<uint8_t> temp_array(256);
+ 
     while ( size > 2 ) {
         size_t pos0 = size - 2, pos1 = pos0 + 1;
 
@@ -66,15 +69,15 @@ void create_elementary_codes(std::vector<uint64_t> &B, std::vector<uint8_t> &shi
             shift[a]++;
         }
 
-        data_about_letter_vector temp;
+        size_t temp_array_size = 0;
 
         for ( uint8_t a : alphabet[pos0].letter_vector )
-            temp.letter_vector.push_back(a);
+            temp_array[ temp_array_size++ ] = a;
 
         for ( uint8_t a : alphabet[pos1].letter_vector )
-            temp.letter_vector.push_back(a);
+            temp_array[ temp_array_size++ ] = a;
         
-        temp.count = alphabet[pos0].count + alphabet[pos1].count;
+        uint64_t sum_count = alphabet[pos0].count + alphabet[pos1].count;
 
         size -= 2;
 
@@ -82,10 +85,17 @@ void create_elementary_codes(std::vector<uint64_t> &B, std::vector<uint8_t> &shi
 
         uint8_t pos_to_insert = size;
 
-        while ( pos_to_insert && ( alphabet[ pos_to_insert - 1 ].count < temp.count ) )
+        while ( pos_to_insert && ( alphabet[ pos_to_insert - 1 ].count < sum_count ) )
             pos_to_insert--;
 
-        alphabet.insert(alphabet.begin() + pos_to_insert, temp);
+        alphabet.insert(alphabet.begin() + pos_to_insert, data_about_letter_vector());
+
+        alphabet[pos_to_insert].count = sum_count;
+
+        alphabet[pos_to_insert].letter_vector.resize(temp_array_size);
+
+        for (size_t i = 0; i < temp_array_size; i++)
+            alphabet[pos_to_insert].letter_vector[i] = temp_array[i];
 
         size++;
     }
